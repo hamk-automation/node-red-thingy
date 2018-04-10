@@ -1,13 +1,18 @@
 {
-  "name": "thingy52",
+  "name": "node-red-thingy",
   "version": "1.0.4",
   "description": "Nordic Thingy:52 Node.js library example. Please see http://www.nordicsemi.com/thingy for the latest Nordic Thingy:52 news and software releases.",
-  "main": "index.js",
+  "main": "thingy.js",
   "directories": {
     "example": "examples"
   },
   "dependencies": {
     "noble-device": "^1.4.1"
+  },
+  "node-red": {
+      "nodes": {
+          "Thingy": "thingy.js"
+      }
   },
   "devDependencies": {},
   "scripts": {

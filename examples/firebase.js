@@ -1,55 +1,27 @@
-/*
-  Copyright (c) 2010 - 2017, Nordic Semiconductor ASA
-  All rights reserved.
-  Redistribution and use in source and binary forms, with or without modification,
-  are permitted provided that the following conditions are met:
-  1. Redistributions of source code must retain the above copyright notice, this
-     list of conditions and the following disclaimer.
-  2. Redistributions in binary form, except as embedded into a Nordic
-     Semiconductor ASA integrated circuit in a product or a software update for
-     such product, must reproduce the above copyright notice, this list of
-     conditions and the following disclaimer in the documentation and/or other
-     materials provided with the distribution.
-  3. Neither the name of Nordic Semiconductor ASA nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
-  4. This software, with or without modification, must only be used with a
-     Nordic Semiconductor ASA integrated circuit.
-  5. Any software provided in binary form under this license must not be reverse
-     engineered, decompiled, modified and/or disassembled.
-  THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
-  OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL NORDIC SEMICONDUCTOR ASA OR CONTRIBUTORS BE
-  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
+
 var Thingy = require('../index');
 var util = require('util');
 var firebase = require('firebase');
 var thingy_id;
 
 var firebase_login = {
-    email : <Email>,
-    pass : <Password>
+    email : 'namtung.10cl2@gmail.com',
+    pass : '@Aimabiet999'
 };
 
 var firebase_config = {
-  apiKey: <API KEY>,
-  authDomain: "<ID>.firebaseapp.com",
-  databaseURL: "https://<ID>.firebaseio.com",
-  storageBucket: "<ID>.appspot.com",
+  apiKey: 'AIzaSyDMTLMd1hom-F_tugcI9f_76fTBrd2uu30',
+  authDomain: "weatherstation-60f5e.firebaseapp.com",
+  databaseURL: "https://weatherstation-60f5e.firebaseio.com",
+  storageBucket: "weatherstation-60f5e.appspot.com",
 };
 
 var database;
 var this_thingy;
 var sigint = false;
 var current_temp = 0;
+var current_hum = 0;
+var current_press = 0;
 
 process.on('SIGINT', function () {
     sigint = true;
@@ -69,7 +41,7 @@ process.on('SIGINT', function () {
     });
 });
 
-function firebaseWriteGasData(gas, temperature) {
+function firebaseWriteGasData(gas, temperature, humidity, pressure) {
     var date  = new Date()
     var ISOString = date.toISOString();
     var timestamp = ISOString.split('T')[0] + '/' + ISOString.split('T')[1].split('Z')[0].replace('.', '_');
@@ -77,19 +49,27 @@ function firebaseWriteGasData(gas, temperature) {
     firebase.database().ref('thingy/' + thingy_id + '/' + timestamp).set({
         eco2: gas.eco2,
         tvoc: gas.tvoc,
-        temp: temperature
+        temp: temperature,
+        humidity: humidity,
+        pressure: pressure,
     });
 }
 
 function onGasSensorData(gas) {
     console.log('Gas sensor: eCO2 ' + gas.eco2 + ' - TVOC ' + gas.tvoc )
-    firebaseWriteGasData(gas, current_temp);
+    firebaseWriteGasData(gas, current_temp, current_hum,current_press);
 }
 
 function onTemperatureData(temperature) {
     current_temp = temperature;
 }
+function onPressureData(pressure) {
+    current_press= pressure;
+}
 
+function onHumidityData(humidity) {
+    current_hum=humidity;
+}
 function connectAndEnableGas(thingy) {
     thingy_id = thingy.id;
     this_thingy = thingy;
@@ -103,11 +83,27 @@ function connectAndEnableGas(thingy) {
                 console.log('Temperature sensor configure! ' + error);
             }
         });
+        thingy.pressure_interval_set(5000, function(error) {
+            if (error) {
+                console.log('Pressure sensor configure! ' + error);
+            }
+        });
+        thingy.humidity_interval_set(5000, function(error) {
+            if (error) {
+                console.log('Humidity sensor configure! ' + error);
+            }
+        });
         thingy.gas_enable(function(error) {
             console.log('Gas sensor started! ' + ((error) ? error : ''));
         });
         thingy.temperature_enable(function(error) {
             console.log('Temperature sensor started! ' + ((error) ? error : ''));
+        });
+        thingy.pressure_enable(function(error) {
+            console.log('Pressure sensor started! ' + ((error) ? error : ''));
+        });
+        thingy.humidity_enable(function(error) {
+            console.log('Humidity sensor started! ' + ((error) ? error : ''));
         });
     });
 }
@@ -123,6 +119,8 @@ function onDiscover(thingy) {
     });
     thingy.on('gasNotif', onGasSensorData);
     thingy.on('temperatureNotif', onTemperatureData);
+    thingy.on('pressureNotif', onPressureData);
+    thingy.on('humidityNotif', onHumidityData);
     connectAndEnableGas(thingy);
 }
 
