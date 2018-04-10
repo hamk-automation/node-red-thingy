@@ -3,7 +3,7 @@
 This is library is using [Nordic-Thingy52-Nodejs](https://github.com/NordicPlayground/Nordic-Thingy52-Nodejs) to collect data from Thingy device.
 
 ## Prerequisites
-1. Add the latest version of Node.js to package manager (must be version 7.x): `curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -`
+1. Add the latest version of Node.js to package manager (must be version 7.x): `curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -` or `https://nodejs.org/en/download/` 
 2. Install dependencies: `sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev git nodejs`. (For RaspberryPi usage)
 
 ## Installation
