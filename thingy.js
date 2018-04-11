@@ -54,18 +54,22 @@ module.exports = function(RED) {
     function ThingyNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        duration=config.time;
+        duration=config.time * 1000;
         Thingy.discover(onDiscover);
 
         setInterval(function(){
+          var prevTemp=0;
+          if(prevTemp!=current_temp){
           var outMsg= {
-            payload: {
-              temperature: current_temp,
-              humidity: current_hum,
-              pressure: current_press
-            }
-          };
-           node.send(outMsg)
+              payload: {
+                temperature: current_temp,
+                humidity: current_hum,
+                pressure: current_press
+              }
+            };
+           node.send(outMsg);
+           prevTemp=current_temp;
+         }
          }, duration);
 
         node.on('node-input-time', function(msg) {
