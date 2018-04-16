@@ -4,7 +4,7 @@
         color: '#3FADB5',
         defaults: {
             name: {value:""},
-            time: {value: 0}
+            time: {value: 3}
         },
         inputs:0,
         outputs:1,
@@ -23,12 +23,12 @@
         <label for="node-input-time"><i class="icon-repeat"></i> Time Interval</label>
         <input type="number" id="node-input-time" placeholder="time in milliseconds">
         <br><br>
-        <p><b>Note:</b> By default, the time interval is 3000 millis</p>
+        <p><b>Note:</b> By default, the time interval is 3 seconds</p>
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="Thingy">
-    <p>A simple node that reads environment data from Nordic Thingy52</p>
-    <p>At the moment, this node is only capable of reading Temperature, Humidity and Pressure</p>
+    <p>A simple node that reads environment service from Nordic Thingy52</p>
+    <p>At the moment, this node is only capable of reading Temperature, Humidity, Pressure, Gas and Battery Level</p>
     <p>Developed by Tung Nguyen</p>
 </script>
