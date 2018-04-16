@@ -1,6 +1,7 @@
 # Nordic Thingy:52 Node-red library
 
 This library is using [Nordic-Thingy52-Nodejs](https://github.com/NordicPlayground/Nordic-Thingy52-Nodejs) and [Noble-device](https://github.com/noble/noble-device) BLE abstract to collect data from Thingy device.
+
 Visualize on : https://iot.research.hamk.fi/visu/d/-BPJu9mik/thingy?from=1523898194792&to=1523908994792&orgId=2&refresh=5s
 
 ## Prerequisites
