@@ -1,10 +1,18 @@
 var Thingy = require('./index');
+var enable=false;
+var battery_enable=false;
 var current_temp = null;
 var current_hum = null;
 var current_press = null;
+var current_battery= null;
+var current_eco2=null;
+var current_tvoc=null;
+var deviceName=null;
 var duration;
-function onTemperatureData(temperature) {
+function onTemperatureData(temperature,id) {
     current_temp = temperature;
+    enable=true;
+    deviceName=id
 }
 function onPressureData(pressure) {
     current_press= pressure;
@@ -12,6 +20,14 @@ function onPressureData(pressure) {
 
 function onHumidityData(humidity) {
     current_hum=humidity;
+}
+function onBatteryLevelChange(level) {
+    current_battery= level;
+    battery_enable=true;
+}
+function onGasData(gas) {
+    current_eco2= gas.eco2;
+    current_tvoc= gas.tvoc;
 }
 
 
@@ -21,6 +37,7 @@ function onDiscover(thingy) {
   thingy.on('temperatureNotif', onTemperatureData);
   thingy.on('pressureNotif', onPressureData);
   thingy.on('humidityNotif', onHumidityData);
+  thingy.on('gasNotif', onGasData);
 
   thingy.connectAndSetUp(function(error) {
     thingy.temperature_interval_set(duration, function(error) {
@@ -30,7 +47,7 @@ function onDiscover(thingy) {
     });
     thingy.pressure_interval_set(duration, function(error) {
         if (error) {
-            c.log('Pressure sensor configure! ' + error);
+            console.log('Pressure sensor configure! ' + error);
         }
     });
     thingy.humidity_interval_set(duration, function(error) {
@@ -38,16 +55,18 @@ function onDiscover(thingy) {
             console.log('Humidity sensor configure! ' + error);
         }
     });
+    thingy.gas_mode_set(1, function(error) {
+        if (error) {
+            console.log('Gas sensor configure! ' + error);
+        }
+    });
 
-    thingy.temperature_enable(function(error) {
-        console.log('Temperature sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.pressure_enable(function(error) {
-        console.log('Pressure sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.humidity_enable(function(error) {
-        console.log('Humidity sensor started! ' + ((error) ? error : ''));
-    });
+    thingy.temperature_enable();
+    thingy.pressure_enable();
+    thingy.humidity_enable();
+    thingy.gas_enable();
+    thingy.on('batteryLevelChange', onBatteryLevelChange);
+    thingy.notifyBatteryLevel();
   });
 }
 module.exports = function(RED) {
@@ -58,19 +77,22 @@ module.exports = function(RED) {
         Thingy.discover(onDiscover);
 
         setInterval(function(){
-          var outMsg= {
-            payload: {
-              temperature: current_temp,
-              humidity: current_hum,
-              pressure: current_press
-            }
-          };
-           node.send(outMsg)
+          if(enable&&battery_enable){
+            var outMsg= {
+              payload: {
+                temperature: current_temp,
+                humidity: current_hum,
+                pressure: current_press,
+                eco2: current_eco2,
+                tvoc:current_tvoc,
+                battery: current_battery,
+                id: deviceName
+              }
+            };
+           node.send(outMsg);
+           enable=false;
+         }
          }, duration);
-
-        node.on('node-input-time', function(msg) {
-          console.log(msg);
-        });
     }
     RED.nodes.registerType("Thingy",ThingyNode);
 }

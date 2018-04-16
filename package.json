@@ -7,12 +7,13 @@
     "example": "examples"
   },
   "dependencies": {
+    "bleno": "^0.5.0",
     "noble-device": "^1.4.1"
   },
   "node-red": {
-      "nodes": {
-          "Thingy": "thingy.js"
-      }
+    "nodes": {
+      "Thingy": "thingy.js"
+    }
   },
   "devDependencies": {},
   "scripts": {
