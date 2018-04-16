@@ -73,7 +73,7 @@ module.exports = function(RED) {
     function ThingyNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        duration=config.time*1000;
+        duration=config.time;
         Thingy.discover(onDiscover);
 
         setInterval(function(){
