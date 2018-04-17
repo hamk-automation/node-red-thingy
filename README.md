@@ -16,5 +16,5 @@ Visualize on : https://iot.research.hamk.fi/visu/d/-BPJu9mik/thingy?from=1523898
 4. `npm link`
 4. Pause current node-red: `node-red-stop`.
 5. Go to node-red root directory `cd ~/.node-red` or `cd C:\Users\my_name\.node_red`: `npm link node-red-thingy`
-6. Run: `node-red-start` or `node-red`.
+6. Run: `sudo node-red-start` or `sudo node-red`. (Give node-red root permission)
 
